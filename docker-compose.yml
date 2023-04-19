@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  im-bored-bot:
+    build: .
+    volumes:
+      - .:/app

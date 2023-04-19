@@ -36,10 +36,23 @@ class AdminUtils(commands.Cog):
 
     # Command to Sync slash commands and be recognized by discord
     @commands.command()
+    @commands.has_permissions(administrator=True)
     async def sync_commands(self, ctx):
         await self.client.tree.sync()
         await ctx.send("Commands synced!")
         print(f"The 'sync_commands' command was run by {ctx.message.author}")
+
+    # Command to get the info of a given user
+    @commands.command()
+    async def userinfo(self, ctx, user: discord.User = None):
+        if user is None:
+            await ctx.send("Please provide a user!")
+            return
+
+        embed = discord.Embed(title ="Userinfo", description = f"The info of {user.name}", color = discord.Colour.blue())
+        embed.add_field(name = user, value = f"-User\'s name: {user.name}\n -User\'s ID {user.id}\n -User\'s discrim: {user.discriminator}\n -User\'s Avatar Hash: {user.avatar}")
+        await ctx.send(embed = embed)
+        print(f"The 'userinfo' command was just run by {ctx.message.author} to get info on {user}")
     
 async def setup(client):
     await client.add_cog(AdminUtils(client))
