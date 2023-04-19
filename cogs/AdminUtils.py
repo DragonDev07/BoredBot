@@ -28,6 +28,7 @@ class AdminUtils(commands.Cog):
 
     # Command to get the info of a given user
     @commands.command()
+    @commands.has_permissions(manage_nicknames=True)
     async def userinfo(self, ctx, user: discord.User = None):
         if user is None:
             await ctx.send("Please provide a user!")
