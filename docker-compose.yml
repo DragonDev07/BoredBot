@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   im-bored-bot:
+    container_name: im-bored-bot
     build: .
     volumes:
       - .:/app
