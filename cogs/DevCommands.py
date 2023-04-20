@@ -15,9 +15,11 @@ class DevCommands(commands.Cog):
     @commands.is_owner()
     async def loadcog(self, ctx, cogname=None):
         if cogname is None:
+            await ctx.send("Please provide a cog to load.")
             return
         try:
-            await self.client.load_extension(cogname)
+            cog = "cogs." + cogname
+            await self.client.load_extension(cog)
         except Exception as e:
             await ctx.send(f"Loading cog {cogname} threw error {e}. Did not load cog.")
         else:
@@ -28,9 +30,11 @@ class DevCommands(commands.Cog):
     @commands.is_owner()
     async def unloadcog(self, ctx, cogname=None):
         if cogname is None:
+            await ctx.send("Please provide a cog to unload.")
             return
         try:
-            await self.client.unload_extension(cogname)
+            cog = "cogs." + cogname
+            await self.client.unload_extension(cog)
         except Exception as e:
            await ctx.send(f"Unloading cog {cogname} threw error {e}. Did not unload cog.")
         else:
