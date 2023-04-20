@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# TOKEN = os.environ.get('DISCORD_BOT_TOKEN') # Actual Bot Token
-TOKEN = os.environ.get('TESTING_BOT_TOKEN') # Testing Bot Token
+TOKEN = os.environ.get('DISCORD_BOT_TOKEN') # Actual Bot Token
+# TOKEN = os.environ.get('TESTING_BOT_TOKEN') # Testing Bot Token
 
 intents = discord.Intents.all()
 intents.message_content = True
@@ -17,7 +17,7 @@ client = commands.Bot(command_prefix='>', intents=intents, help_command=None)
 async def on_ready():
     await client.change_presence(
         status=discord.Status.online,
-        activity=discord.Game("I was bored, now this bot exists. Use '>help' for commands."))
+        activity=discord.Game("Use '>help' for commands. I was bored, now this bot exists."))
     print("Bot is online, good luck >:)")
     print("-------------------------------")
 
