@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 from discord import FFmpegPCMAudio
+from pytube import YouTube
+import os
 
 class Media(commands.Cog):
     def __init__(self, client):
@@ -23,6 +25,7 @@ class Media(commands.Cog):
     
     @commands.hybrid_command()
     async def leave(self, ctx):
+        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
         if (ctx.voice_client):
             await ctx.guild.voice_client.disconnect()
             await ctx.send("Left VC")
@@ -35,6 +38,7 @@ class Media(commands.Cog):
         voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
         if (voice.is_playing()):
             voice.pause()
+            await ctx.send("Paused audio")
         else:
             await ctx.send("I am not playing anything at the moment")
         print(f"The 'pause' command was run by {ctx.message.author}")
@@ -44,22 +48,38 @@ class Media(commands.Cog):
         voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
         if (voice.is_paused()):
             voice.resume()
+            await ctx.send("Resumed Audio")
         else:
             await ctx.send("No audio is paused at the moment!")
         print(f"The 'resume' command was run by {ctx.message.author}")
  
     @commands.hybrid_command()
-    async def play(self, ctx, args):
-        await ctx.send("This command is still under development, please try again later.")
-        # voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
-        # if (args == "song1"):
-        #     source = FFmpegPCMAudio("static_music.mp3")
-        #     await ctx.send("Playing music")
-        # elif (args == "song2"):
-        #     source = FFmpegPCMAudio("static_music.mp3")
-        #     await ctx.send("Playing other definitly more different music")
-        # player = voice.play(source)
-        print(f"The 'play' command has been run by {ctx.message.author}")
+    async def play(self, ctx, url):
+        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+        guild = ctx.message.guild
+
+        yt = YouTube(url)
+        stream = yt.streams.filter(only_audio=True).first()
+        stream.download(output_path="tmp", filename="temp_audio.mp3")
+
+        path = "tmp/temp_audio.mp3"
+
+        voice.play(discord.FFmpegPCMAudio(path), after=lambda x: end_song(guild, path))
+        voice.source = discord.PCMVolumeTransformer(voice.source, 1)
+
+        await ctx.send(f'**Music: **{url}')
+        print(f"The 'play' command was run by {ctx.message.author}, playing video {url}")
+    
+    @commands.hybrid_command()
+    async def stop(self, ctx):
+        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+        voice.pause()
+        end_song()
+        await ctx.send("Stopped Playing Song.")
+        print(f"The 'stop' command was run by {ctx.message.author}")
 
 async def setup(client):
     await client.add_cog(Media(client))
+
+def end_song(guild, path):
+    os.remove(path)
