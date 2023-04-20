@@ -67,7 +67,7 @@ class Media(commands.Cog):
         voice.play(discord.FFmpegPCMAudio(path), after=lambda x: end_song(guild, path))
         voice.source = discord.PCMVolumeTransformer(voice.source, 1)
 
-        await ctx.send(f'**Music: **{url}')
+        await ctx.send(f'**Playing: **{url}')
         print(f"The 'play' command was run by {ctx.message.author}, playing video {url}")
     
     @commands.hybrid_command()
@@ -77,6 +77,24 @@ class Media(commands.Cog):
         end_song()
         await ctx.send("Stopped Playing Song.")
         print(f"The 'stop' command was run by {ctx.message.author}")
+
+    @commands.hybrid_command()
+    async def volume(self, ctx, percent: float=None):
+        # Get the voice client for the current guild
+        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+        if(not voice):
+            await ctx.send("I'm not connected to a voice channel.")
+            return
+        elif(not voice.is_playing()):
+            await ctx.send("I'm not currently playing anything.")
+            return
+        
+        if(percent==None):
+            await ctx.send(f"The current volume is {voice.source.volume * 100}%")
+        else:
+            voice.source.volume = percent / 100
+            await ctx.send(f"Volume set to {percent}%.")
+        print(f"The 'volume' command was run by {ctx.message.author} to set the volume to {percent}%")
 
 async def setup(client):
     await client.add_cog(Media(client))
