@@ -1,8 +1,13 @@
 version: '3.8'
 
 services:
-  im-bored-bot:
-    container_name: im-bored-bot
-    build: .
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python main.py
+    container_name: bored-bot
     volumes:
       - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
