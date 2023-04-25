@@ -2,3 +2,4 @@ asyncio
 discord.py
 python-dotenv
 pytube
+openai

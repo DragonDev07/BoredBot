@@ -22,6 +22,8 @@ class Greetings(commands.Cog):
         channel = member.guild.system_channel
         if channel is not None:
             await channel.send(f'Welcome {member.mention} have f...u...u...u...u...u...n!')
+        else:
+            print("Could not run on_member_join, channel returned none")
 
 async def setup(client):
     await client.add_cog(Greetings(client))
