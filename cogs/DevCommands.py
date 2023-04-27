@@ -31,6 +31,7 @@ class DevCommands(commands.Cog):
             await ctx.send("Loaded Cog!")
         print(f"The 'loadcog' command was run by {ctx.message.author}")
 
+    # Command that unloads the given cog 
     @commands.command()
     @commands.is_owner()
     async def unloadcog(self, ctx, cogname=None):

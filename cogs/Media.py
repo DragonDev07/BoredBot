@@ -18,6 +18,7 @@ class Media(commands.Cog):
     async def on_command_error(self, ctx, error):
         await self.bot.on_command_error(ctx, error)
 
+    # Command that makes the bot join the vc
     @commands.hybrid_command()
     async def join(self, ctx):
         if(ctx.author.voice):
@@ -28,6 +29,7 @@ class Media(commands.Cog):
             await ctx.send("You must be in a voice channel to run this command!")
         print(f"The 'join' command was run by {ctx.message.author}")
     
+    # Command that makes the bot leave the vc
     @commands.hybrid_command()
     async def leave(self, ctx):
         voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
@@ -38,6 +40,7 @@ class Media(commands.Cog):
             await ctx.send("I am not in a VC at the moment. Use >join or /join to add me to one!")
         print(f"The 'leave' command was run by {ctx.message.author}")
     
+    # Command that pauses the current playing audio
     @commands.hybrid_command()
     async def pause(self, ctx):
         voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
@@ -48,6 +51,7 @@ class Media(commands.Cog):
             await ctx.send("I am not playing anything at the moment")
         print(f"The 'pause' command was run by {ctx.message.author}")
 
+    # Command that resumes paused audio
     @commands.hybrid_command()
     async def resume(self, ctx):
         voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
@@ -58,6 +62,7 @@ class Media(commands.Cog):
             await ctx.send("No audio is paused at the moment!")
         print(f"The 'resume' command was run by {ctx.message.author}")
  
+    # Command that playes given YouTube URL
     @commands.hybrid_command()
     async def play(self, ctx, url):
         voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
@@ -74,6 +79,7 @@ class Media(commands.Cog):
         await ctx.send(f'**Playing: **{url}')
         print(f"The 'play' command was run by {ctx.message.author}, playing video {url}")
     
+    # Command that stops playing audio (delets file, cannot be resumed)
     @commands.hybrid_command()
     async def stop(self, ctx):
         voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
@@ -82,6 +88,7 @@ class Media(commands.Cog):
         await ctx.send("Stopped Playing Song.")
         print(f"The 'stop' command was run by {ctx.message.author}")
 
+    # Command to get or set volume of the audio
     @commands.hybrid_command()
     async def volume(self, ctx, percent: float=None):
         # Get the voice client for the current guild

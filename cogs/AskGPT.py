@@ -21,6 +21,7 @@ class AskGPT(commands.Cog):
     async def on_command_error(self, ctx, error):
         await self.bot.on_command_error(ctx, error)
 
+    # AskGPT command which calls the openai api to ask chatgpt a given prompt
     @commands.command()
     async def askgpt(self, ctx, *, prompt:str=None):
         embed = discord.Embed(title = "AskGPT", colour = discord.Colour.blurple())

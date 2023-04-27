@@ -15,6 +15,7 @@ class Help(commands.Cog):
     async def on_command_error(self, ctx, error):
         await self.bot.on_command_error(ctx, error)
 
+    # Help command which lists all commands, cogs, prefixes, etc.
     @commands.hybrid_command()
     async def help(self, ctx):
         embed = discord.Embed(title = "Help", colour = discord.Colour.blurple())
