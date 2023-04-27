@@ -10,6 +10,11 @@ class Greetings(commands.Cog):
     async def on_ready(self):
         print("The 'Greetings' cog has been loaded")
 
+    # Propagate the error to the global error handler
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        await self.bot.on_command_error(ctx, error)
+
     # "hello" command describing what the bot is and why I made it
     @commands.hybrid_command()
     async def hello(self, ctx):

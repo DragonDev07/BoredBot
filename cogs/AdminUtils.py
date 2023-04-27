@@ -10,6 +10,11 @@ class AdminUtils(commands.Cog):
     async def on_ready(self):
         print("The 'AdminUtils' cog has been loaded")
 
+    # Propagate the error to the global error handler
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        await self.bot.on_command_error(ctx, error)
+
     # Command to kick a member
     @commands.command()
     @commands.has_permissions(kick_members=True)
@@ -32,7 +37,7 @@ class AdminUtils(commands.Cog):
     async def clear(self, ctx, amount=10):
         await ctx.channel.purge(limit=amount)
         await ctx.send(f"Cleared the last {amount} messages")
-        print(f"The 'clear' command was run by {ctx.message.author}")
+        print(f"The 'clear' command was run by {ctx.message.author} for amount {amount}")
 
     # Command to get the info of a given user
     @commands.command()

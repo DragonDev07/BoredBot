@@ -11,9 +11,15 @@ class AskGPT(commands.Cog):
     def __init__(self, client):
         self.client = client
 
+    # Log that the Cog has been loaded
     @commands.Cog.listener()
     async def on_ready(self):
         print("The 'AskGPT' cog has been loaded")
+
+    # Propagate the error to the global error handler
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        await self.bot.on_command_error(ctx, error)
 
     @commands.command()
     async def askgpt(self, ctx, *, prompt:str=None):

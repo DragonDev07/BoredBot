@@ -10,6 +10,11 @@ class DevCommands(commands.Cog):
     async def on_ready(self):
         print("The 'DevCommands' cog has been loaded")
 
+    # Propagate the error to the global error handler
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        await self.bot.on_command_error(ctx, error)
+
     # Command to load given cog
     @commands.command()
     @commands.is_owner()

@@ -13,6 +13,11 @@ class Media(commands.Cog):
     async def on_ready(self):
         print("The 'Media' cog has been loaded")
 
+    # Propagate the error to the global error handler
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        await self.bot.on_command_error(ctx, error)
+
     @commands.hybrid_command()
     async def join(self, ctx):
         if(ctx.author.voice):
@@ -63,7 +68,6 @@ class Media(commands.Cog):
         stream.download(output_path="tmp", filename="temp_audio.mp3")
 
         path = "tmp/temp_audio.mp3"
-
         voice.play(discord.FFmpegPCMAudio(path), after=lambda x: end_song(guild, path))
         voice.source = discord.PCMVolumeTransformer(voice.source, 1)
 

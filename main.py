@@ -21,6 +21,10 @@ async def on_ready():
     print("Bot is online, good luck >:)")
     print("-------------------------------")
 
+@client.event
+async def on_command_error(ctx, error):
+    print(f"Error, {error}")
+
 async def load():
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
