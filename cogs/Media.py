@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 from discord import FFmpegPCMAudio
 from pytube import YouTube
 import os
@@ -19,54 +20,62 @@ class Media(commands.Cog):
         await self.bot.on_command_error(ctx, error)
 
     # Command that makes the bot join the vc
-    @commands.hybrid_command()
-    async def join(self, ctx):
-        if(ctx.author.voice):
-            channel = ctx.message.author.voice.channel
+    @app_commands.command()
+    async def join(self, interaction: discord.Interaction):
+        if(interaction.user.voice):
+            channel = interaction.user.voice.channel
             await channel.connect()
-            await ctx.send("Joined VC, Use >play or /play to play music")
+            embed = discord.Embed(title="Joined!", description = "Joined VC, Use /play to play music/videos", colour = discord.Colour.blurple())
+            await interaction.response.send_message(embed=embed)
         else:
-            await ctx.send("You must be in a voice channel to run this command!")
-        print(f"The 'join' command was run by {ctx.message.author}")
+            embed = discord.Embed(title="Did Not Join!", description = "You must be in a voice channel to run this command!", colour = discord.Colour.blurple())
+            await interaction.response.send_message(embed=embed)
+        print(f"The 'join' command was run by {interaction.user}")
     
     # Command that makes the bot leave the vc
-    @commands.hybrid_command()
-    async def leave(self, ctx):
-        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
-        if (ctx.voice_client):
-            await ctx.guild.voice_client.disconnect()
-            await ctx.send("Left VC")
+    @app_commands.command()
+    async def leave(self, interaction: discord.Interaction):
+        voice = discord.utils.get(self.client.voice_clients, guild=interaction.guild)
+        if (voice):
+            await interaction.guild.voice_client.disconnect()
+            embed = discord.Embed(title = "Left!", description="Left VC, use /join to add me back!", colour = discord.Colour.blurple())
+            await interaction.response.send_message(embed=embed)
         else:
-            await ctx.send("I am not in a VC at the moment. Use >join or /join to add me to one!")
-        print(f"The 'leave' command was run by {ctx.message.author}")
+            embed = discord.Embed(title = "Not in VC!", description="I am not in a VC at the moment. Use >join or /join to add me to one!", colour = discord.Colour.blurple())
+            await interaction.response.send_message(embed=embed)
+        print(f"The 'leave' command was run by {interaction.user}")
     
     # Command that pauses the current playing audio
-    @commands.hybrid_command()
-    async def pause(self, ctx):
-        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+    @app_commands.command()
+    async def pause(self, interaction: discord.Interaction):
+        voice = discord.utils.get(self.client.voice_clients, guild=interaction.guild)
         if (voice.is_playing()):
             voice.pause()
-            await ctx.send("Paused audio")
+            embed = discord.Embed(title = "Paused", description="Paused Audio, use /resume to resume playing", colour = discord.Colour.blurple())
+            await interaction.response.send_message(embed=embed)
         else:
-            await ctx.send("I am not playing anything at the moment")
-        print(f"The 'pause' command was run by {ctx.message.author}")
+            embed = discord.Embed(title = "Could not Pause", description="I am not playing anything at the moment!", colour = discord.Colour.blurple())
+            await interaction.response.send_message.send(embed=embed)
+        print(f"The 'pause' command was run by {interaction.user}")
 
     # Command that resumes paused audio
-    @commands.hybrid_command()
-    async def resume(self, ctx):
-        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+    @app_commands.command()
+    async def resume(self, interaction: discord.Interaction):
+        voice = discord.utils.get(self.client.voice_clients, guild=interaction.guild)
         if (voice.is_paused()):
             voice.resume()
-            await ctx.send("Resumed Audio")
+            embed = discord.Embed(title = "Resumed", description="Resumed playing audio", colour = discord.Colour.blurple())
+            await interaction.response.send_message(embed=embed)
         else:
-            await ctx.send("No audio is paused at the moment!")
-        print(f"The 'resume' command was run by {ctx.message.author}")
+            embed = discord.Embed(title = "Couldnt Resume!", description = "No audio is paused at the moment!", colour = discord.Colour.blurple())
+            await interaction.response.send_message(embed=embed)
+        print(f"The 'resume' command was run by {interaction.user}")
  
     # Command that playes given YouTube URL
-    @commands.hybrid_command()
-    async def play(self, ctx, url):
-        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
-        guild = ctx.message.guild
+    @app_commands.command()
+    async def play(self, interaction: discord.Interaction, url):
+        voice = discord.utils.get(self.client.voice_clients, guild=interaction.guild)
+        guild = interaction.message.guild
 
         yt = YouTube(url)
         stream = yt.streams.filter(only_audio=True).first()
@@ -76,36 +85,42 @@ class Media(commands.Cog):
         voice.play(discord.FFmpegPCMAudio(path), after=lambda x: end_song(guild, path))
         voice.source = discord.PCMVolumeTransformer(voice.source, 1)
 
-        await ctx.send(f'**Playing: **{url}')
-        print(f"The 'play' command was run by {ctx.message.author}, playing video {url}")
+        embed = discord.Embed("Now Playing", description = f"{url}", colour = discord.Colour.blurple())
+        await interaction.response.send_message(embed=embed)
+        print(f"The 'play' command was run by {interaction.user}, playing video {url}")
     
     # Command that stops playing audio (delets file, cannot be resumed)
-    @commands.hybrid_command()
-    async def stop(self, ctx):
-        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+    @app_commands.command()
+    async def stop(self, interaction: discord.Interaction):
+        voice = discord.utils.get(self.client.voice_clients, guild=interaction.guild)
         voice.pause()
         end_song()
-        await ctx.send("Stopped Playing Song.")
-        print(f"The 'stop' command was run by {ctx.message.author}")
+        embed = discord.Embed(title = "Stopped", description="Stopped Playing Audio", colour = discord.Colour.blurple())
+        await interaction.response.send_message(embed=embed)
+        print(f"The 'stop' command was run by {interaction.user}")
 
     # Command to get or set volume of the audio
-    @commands.hybrid_command()
-    async def volume(self, ctx, percent: float=None):
+    @app_commands.command()
+    async def volume(self, interaction: discord.Interaction, percent: float=None):
         # Get the voice client for the current guild
-        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+        voice = discord.utils.get(self.client.voice_clients, guild=interaction.guild)
         if(not voice):
-            await ctx.send("I'm not connected to a voice channel.")
+            embed = discord.Embed(title = "Error!", description="I'm not connected to a voice channel.", colour = discord.Colour.blurple())
+            await interaction.response.send_message(embed=embed)
             return
         elif(not voice.is_playing()):
-            await ctx.send("I'm not currently playing anything.")
+            embed = discord.Embed(title = "Error!", description="I'm not currently playing anything.", colour = discord.Colour.blurple())
+            await interaction.response.send_message(embed=embed)
             return
         
         if(percent==None):
-            await ctx.send(f"The current volume is {voice.source.volume * 100}%")
+            embed = discord.Embed(title = "Volume", description=f"The current volume is {voice.source.volume * 100}%", colour = discord.Colour.blurple())
+            await interaction.reponse.send_message(embed=embed)
         else:
             voice.source.volume = percent / 100
-            await ctx.send(f"Volume set to {percent}%.")
-        print(f"The 'volume' command was run by {ctx.message.author} to set the volume to {percent}%")
+            embed = discord.Embed(title = "Volume", description=f"Volume set to {percent}%.", colour = discord.Colour.blurple())
+            await interaction.reponse.send_message(embed=embed)
+        print(f"The 'volume' command was run by {interaction.user} to set the volume to {percent}%")
 
 async def setup(client):
     await client.add_cog(Media(client))

@@ -2,6 +2,7 @@ import openai
 import os
 import discord
 from discord.ext import commands
+from discord import app_commands
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -22,16 +23,16 @@ class AskGPT(commands.Cog):
         await self.bot.on_command_error(ctx, error)
 
     # AskGPT command which calls the openai api to ask chatgpt a given prompt
-    @commands.command()
-    async def askgpt(self, ctx, *, prompt:str=None):
+    @app_commands.command()
+    async def askgpt(self, interaction: discord.Interaction, *, prompt:str=None):
         embed = discord.Embed(title = "AskGPT", colour = discord.Colour.blurple())
         if(prompt == None):
             embed.add_field(name="Error", value="Error, you must provide a prompt.")
         else:
             embed.add_field(name="Prompt", value=f"{prompt}")
             embed.add_field(name="Response", value=f"{callGPT(prompt)}")
-        await ctx.send(embed = embed)
-        print(f"The 'askGPT' command was run by {ctx.message.author}")
+        await interaction.response.send_message(embed = embed)
+        print(f"The 'askGPT' command was run by {interaction.user}")
 
 def callGPT(prompt):
     print("Running 'callGPT'")

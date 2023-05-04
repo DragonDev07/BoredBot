@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 
 class Greetings(commands.Cog):
     def __init__(self, client):
@@ -16,10 +17,11 @@ class Greetings(commands.Cog):
         await self.bot.on_command_error(ctx, error)
 
     # "hello" command describing what the bot is and why I made it
-    @commands.hybrid_command()
-    async def hello(self, ctx):
-        await ctx.send("Hello, I'm Bored, Bored Bot. I was made by Teo when he was bored, have fun!")
-        print(f"The 'hello' command was run by {ctx.message.author}")
+    @app_commands.command()
+    async def hello(self, interaction: discord.Interaction):
+        embed = discord.Embed(title = "Hello!", description = "Hello, I'm Bored, Bored Bot. I was made by Teo when he was bored, have fun!", colour = discord.Colour.blurple())
+        await interaction.response.send_message(embed=embed)
+        print(f"The 'hello' command was run by {interaction.user}")
 
     # Send a "Welcome" message when a user joins the server
     @commands.Cog.listener()

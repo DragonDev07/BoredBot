@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 
 class Help(commands.Cog):
     def __init__(self, client):
@@ -16,8 +17,8 @@ class Help(commands.Cog):
         await self.bot.on_command_error(ctx, error)
 
     # Help command which lists all commands, cogs, prefixes, etc.
-    @commands.hybrid_command()
-    async def help(self, ctx):
+    @app_commands.command()
+    async def help(self, interaction: discord.Interaction):
         embed = discord.Embed(title = "Help", colour = discord.Colour.blurple())
         embed.add_field(name = "Hello!", value = ">hello - Bot will introduce itself, and describe why it was made", inline = False)
         embed.add_field(name = "Prefixes", value = "All comands will work no matter what when prefixed with '>', if you would like to use '/' commands, only some work (no admin util commands work).", inline = False)
@@ -26,14 +27,14 @@ class Help(commands.Cog):
         embed.add_field(name = "AskGPT Commands", value = "• >askgpt <prompt> - Asks GPT model given prompt, and sends response")
         embed.add_field(name = "Cogs (DEBUG INFO FOR DEVELOPERS)", value = "• Greetings\n• AdminUtils\n• Help\n• Media\n• DevCommands\n• AskGPT", inline = False)
         embed.add_field(name = "Created w/ ❤️ by:", value = "Teo Welton (FurthestDrop517#9625). Enjoy!\n (if you wanna contribute run >contributing)", inline = False)
-        await ctx.send(embed = embed)
-        print(f"The 'help' command was run by {ctx.message.author}")
+        await interaction.response.send_message(embed = embed)
+        print(f"The 'help' command was run by {interaction.user}")
 
-    @commands.hybrid_command()
-    async def contributing(self, ctx):
+    @app_commands.command()
+    async def contributing(self, interaction: discord.Interaction):
         embed = discord.Embed(title = "Contribute (For Developers!)", description = "Developers! Do you want to contribute? Come on over to github!", colour = discord.Colour.yellow())
         embed.add_field(name = "Github Repository", value = "Checkout the repo and contribute at https://github.com/DragonDev07/im-bored-discord-bot", inline = False)
-        await ctx.send(embed = embed)
+        await interaction.response.send_message(embed = embed)
 
 async def setup(client):
     await client.add_cog(Help(client))
