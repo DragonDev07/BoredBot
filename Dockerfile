@@ -7,6 +7,6 @@ RUN apt-get update && apt-get install -y ffmpeg && apt-get clean && rm -rf /var/
 WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
-RUN pip install git+https://github.com/pytube/pytube
+RUN pip install git+https://github.com/pytube/pytube@refs/pull/1575/head
 
 COPY . .
