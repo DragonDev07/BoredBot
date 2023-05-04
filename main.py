@@ -29,8 +29,7 @@ async def on_command_error(ctx, error):
 # Golbal app_command error handler
 @client.tree.error
 async def on_slash_error(interaction: discord.Interaction, error):
-    embed = discord.Embed(title="Error!", colour = discord.Colour.blurple())
-    embed.add_field(name = "", value = error, inline=False)
+    embed = discord.Embed(title="Error!", description = error, colour = discord.Colour.blurple())
     embed.add_field(name = "Something Unexpected?", value = "Report the error message to FurthestDrop517#9625!", inline=False)
 
     await interaction.response.send_message(embed=embed)
