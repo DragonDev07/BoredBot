@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-TOKEN = os.environ.get('DISCORD_BOT_TOKEN') # Actual Bot Token
-# TOKEN = os.environ.get('TESTING_BOT_TOKEN') # Testing Bot Token
+# TOKEN = os.environ.get('DISCORD_BOT_TOKEN') # Actual Bot Token
+TOKEN = os.environ.get('TESTING_BOT_TOKEN') # Testing Bot Token
 
 intents = discord.Intents.all()
 intents.message_content = True
@@ -24,12 +24,15 @@ async def on_ready():
 # Global @command error handler
 @client.event
 async def on_command_error(ctx, error):
+    embed = discord.Embed(title="Error!", description = error, colour = discord.Colour.red())
+    embed.add_field(name = "Something Unexpected?", value = "Report the error message to FurthestDrop517#9625!", inline=False)
+    ctx.send(embed=embed)
     print(f"Error, {error}")
 
 # Golbal app_command error handler
 @client.tree.error
 async def on_slash_error(interaction: discord.Interaction, error):
-    embed = discord.Embed(title="Error!", description = error, colour = discord.Colour.blurple())
+    embed = discord.Embed(title="Error!", description = error, colour = discord.Colour.red())
     embed.add_field(name = "Something Unexpected?", value = "Report the error message to FurthestDrop517#9625!", inline=False)
 
     await interaction.response.send_message(embed=embed)

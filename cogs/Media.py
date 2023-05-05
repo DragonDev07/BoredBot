@@ -107,11 +107,11 @@ class Media(commands.Cog):
         # Get the voice client for the current guild
         voice = discord.utils.get(self.client.voice_clients, guild=interaction.guild)
         if(not voice):
-            embed = discord.Embed(title = "Error!", description="I'm not connected to a voice channel.", colour = discord.Colour.blurple())
+            embed = discord.Embed(title = "Error!", description="I'm not connected to a voice channel.", colour = discord.Colour.red())
             await interaction.response.send_message(embed=embed)
             return
         elif(not voice.is_playing()):
-            embed = discord.Embed(title = "Error!", description="I'm not currently playing anything.", colour = discord.Colour.blurple())
+            embed = discord.Embed(title = "Error!", description="I'm not currently playing anything.", colour = discord.Colour.red())
             await interaction.response.send_message(embed=embed)
             return
         

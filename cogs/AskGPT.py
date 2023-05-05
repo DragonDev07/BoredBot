@@ -8,6 +8,8 @@ load_dotenv()
 
 openai.api_key = os.environ.get('OPENAI_API_KEY')
 
+disabled = True
+
 class AskGPT(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -21,17 +23,21 @@ class AskGPT(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         await self.bot.on_command_error(ctx, error)
-
+    
     # AskGPT command which calls the openai api to ask chatgpt a given prompt
     @app_commands.command()
-    async def askgpt(self, interaction: discord.Interaction, *, prompt:str=None):
-        embed = discord.Embed(title = "AskGPT", colour = discord.Colour.blurple())
-        if(prompt == None):
-            embed.add_field(name="Error", value="Error, you must provide a prompt.")
+    async def askgpt(self, interaction: discord.Interaction, *, prompt:str = None):
+        if (disabled):
+            embed = discord.Embed(title = "Error!", description="This Command is currently disabled!", colour = discord.Colour.red())
+            await interaction.response.send_message(embed=embed)
         else:
-            embed.add_field(name="Prompt", value=f"{prompt}")
-            embed.add_field(name="Response", value=f"{callGPT(prompt)}")
-        await interaction.response.send_message(embed = embed)
+            embed = discord.Embed(title = "AskGPT", colour = discord.Colour.blurple())
+            if(prompt == None):
+                embed.add_field(name="Error", value="Error, you must provide a prompt.")
+            else:
+                embed.add_field(name="Prompt", value=f"{prompt}")
+                embed.add_field(name="Response", value=f"{callGPT(prompt)}")
+            await interaction.response.send_message(embed = embed)
         print(f"The 'askGPT' command was run by {interaction.user}")
 
 def callGPT(prompt):
