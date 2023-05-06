@@ -76,17 +76,19 @@ class Media(commands.Cog):
     async def play(self, interaction: discord.Interaction, url: str):
         voice = discord.utils.get(self.client.voice_clients, guild=interaction.guild)
         guild = interaction.guild
+        
+        await interaction.response.defer()
 
         yt = YouTube(url)
         stream = yt.streams.filter(only_audio=True).first()
         stream.download(output_path="tmp", filename="temp_audio.mp3")
-
+        
         path = "tmp/temp_audio.mp3"
         voice.play(discord.FFmpegPCMAudio(path), after=lambda x: end_song(guild, path))
         voice.source = discord.PCMVolumeTransformer(voice.source, 1)
 
         embed = discord.Embed(title = "Now Playing", description = f"{url}", colour = discord.Colour.blurple())
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed)
         print(f"The 'play' command was run by {interaction.user}, playing video {url}")
     
     # Command that stops playing audio (delets file, cannot be resumed)
@@ -114,14 +116,14 @@ class Media(commands.Cog):
             embed = discord.Embed(title = "Error!", description="I'm not currently playing anything.", colour = discord.Colour.red())
             await interaction.response.send_message(embed=embed)
             return
-        
+
         if(percent==None):
             embed = discord.Embed(title = "Volume", description=f"The current volume is {voice.source.volume * 100}%", colour = discord.Colour.blurple())
-            await interaction.reponse.send_message(embed=embed)
+            await interaction.response.send_message(embed=embed)
         else:
             voice.source.volume = percent / 100
             embed = discord.Embed(title = "Volume", description=f"Volume set to {percent}%.", colour = discord.Colour.blurple())
-            await interaction.reponse.send_message(embed=embed)
+            await interaction.response.send_message(embed=embed)
         print(f"The 'volume' command was run by {interaction.user} to set the volume to {percent}%")
 
 async def setup(client):
