@@ -28,7 +28,7 @@ class AskGPT(commands.Cog):
     @app_commands.command()
     async def askgpt(self, interaction: discord.Interaction, *, prompt:str = None):
         if (disabled):
-            embed = discord.Embed(title = "Error!", description="This Command is currently disabled!", colour = discord.Colour.red())
+            embed = discord.Embed(title = "Error!", description="This Command is currently disabled by the developers!\n Please be patient while we try to patch it :D", colour = discord.Colour.red())
             await interaction.response.send_message(embed=embed)
         else:
             embed = discord.Embed(title = "AskGPT", colour = discord.Colour.blurple())

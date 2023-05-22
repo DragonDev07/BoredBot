@@ -4,6 +4,9 @@ from discord.ext import commands
 class DevCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.blocked_users = set()
+
+    
 
     # Log that the cog was loaded
     @commands.Cog.listener()
@@ -54,6 +57,32 @@ class DevCommands(commands.Cog):
         await self.client.tree.sync()
         await ctx.send("Commands synced!")
         print(f"The 'sync_commands' command was run by {ctx.message.author}")
+
+    # Command to spectator mode, deletes messages and reactions when sent
+    @commands.command()
+    @commands.is_owner()
+    async def mute(self, ctx, user: discord.User):
+        self.blocked_users.add(user.id)
+        await ctx.send(f'{user.name} has been muted.')
+    
+    @commands.command()
+    @commands.is_owner()
+    async def unmute(self, ctx, user: discord.User):
+        self.blocked_users.remove(user.id)
+        await ctx.send(f"{user.name} has been unmuted")
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author == self.client.user:
+            return
+        if message.author.id in self.blocked_users:
+            await message.delete()
+        await self.client.process_commands(message)
+
+    @commands.Cog.listener()
+    async def on_reaction_add(self, reaction, user):
+        if user.id in self.blocked_users:
+            await reaction.remove(user)
         
 async def setup(client):
     await client.add_cog(DevCommands(client))
